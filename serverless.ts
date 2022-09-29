@@ -22,6 +22,11 @@ const serverlessConfiguration: AWS = {
         Effect: "Allow",         // O effect que irá fazer
         Action: ["dynamodb:*"],  // Onde será realizado o effect, neste caso será liberada todas as tabelas do dynamodb
         Resource: ["*"],         // Libera para todos os Resources configurados
+      },
+      {
+        Effect: "Allow",
+        Action: ["s3:*"],
+        Resource: ["*"],
       }
     ],
   },
@@ -51,6 +56,7 @@ const serverlessConfiguration: AWS = {
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
+      external: ['chrome-aws-lambda'],
     },
     dynamodb: {
       stages: ['dev', 'local'], // Infoma quando deve utilizar o DynamoDB Local
