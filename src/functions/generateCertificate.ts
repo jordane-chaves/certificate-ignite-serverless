@@ -4,6 +4,7 @@ import { join } from 'path';
 import { compile } from 'handlebars';
 import dayjs from "dayjs";
 import chromium from 'chrome-aws-lambda';
+import { S3 } from 'aws-sdk';
 
 import { document } from '../utils/dynamodbClient';
 
@@ -57,18 +58,7 @@ const generatePDF = async (content: string): Promise<Buffer> => {
 export const handler: APIGatewayProxyHandler = async (event) => {
   const { id, name, grade } = JSON.parse(event.body) as ICreateCertificate;
 
-  // Inserir dados no banco de dados DynamoDB
-  await document.put({
-    TableName: 'users_certificate',
-    Item: {
-      id,
-      name,
-      grade,
-      created_at: dayjs().format(),
-    },
-  }).promise();
-
-  // Buscar o certificado pelo id
+  // Buscar o usuário pelo id
   const response = await document.query({
     TableName: 'users_certificate',
     KeyConditionExpression: 'id = :id',
@@ -76,6 +66,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       ':id': id,
     }
   }).promise();
+
+  const userAlreadyExists = response.Items[0];
+
+  if (!userAlreadyExists) {
+    // Inserir dados no banco de dados DynamoDB
+    await document.put({
+      TableName: 'users_certificate',
+      Item: {
+        id,
+        name,
+        grade,
+        created_at: dayjs().format(),
+      },
+    }).promise();
+  }
 
   // Ler arquivo selo.png como base64
   const medalPath = join(process.cwd(), 'src', 'templates', 'selo.png');
@@ -93,8 +98,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
   const pdf = await generatePDF(content);
 
+  const s3 = new S3();
+
+  await s3.putObject({
+    Bucket: 'certificate-nodejs',
+    Key: `${id}.pdf`,
+    ACL: 'public-read',
+    Body: pdf,
+    ContentType: 'application/pdf',
+  }).promise();
+
   return {
     statusCode: 201,
-    body: JSON.stringify(response.Items[0]),
+    body: JSON.stringify({
+      message: 'Certificado criado com sucesso!',
+      url: `https://certificate-nodejs.s3.sa-east-1.amazonaws.com/${id}.pdf`,
+    }),
   }
 }
