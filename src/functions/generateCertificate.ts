@@ -1,9 +1,9 @@
-import { APIGatewayProxyHandler } from "aws-lambda";
+import dayjs from "dayjs";
+import chromium from 'chrome-aws-lambda';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { compile } from 'handlebars';
-import dayjs from "dayjs";
-import chromium from 'chrome-aws-lambda';
+import { APIGatewayProxyHandler } from "aws-lambda";
 import { S3 } from 'aws-sdk';
 
 import { document } from '../utils/dynamodbClient';
