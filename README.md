@@ -16,7 +16,7 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 
 ## 💻 Projeto
 
-Este projeto foi construído na trilha de NodeJS do programa Ignite oferecido pela [Rocketseat](https://rocketseat.com.br).
+Este projeto foi desenvolvido na trilha de NodeJS do programa Ignite oferecido pela [Rocketseat](https://rocketseat.com.br).
 
 O projeto tem como responsabilidade gerar um certificado para um usuário e a possibilidade de pesquisar a validade de um certificado.
 
@@ -39,6 +39,10 @@ Antes de iniciar é necessário ter a ferramenta [serverless](https://www.server
 
 - Configurar as credenciais do usuário
 - Execute `yarn deploy` para subir o projeto para AWS Lambda
+
+## 📄 Licença
+
+Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE.md) para mais detalhes.
 
 ## Autor
 
